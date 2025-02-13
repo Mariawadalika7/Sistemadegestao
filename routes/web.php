@@ -1,22 +1,24 @@
 <?php
-// routes/web.php
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\ConsumoController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\ConfiguracaoController;
+use App\Http\Controllers\ExportController;
+use Illuminate\Support\Facades\Route;
 
 // Rotas de Autenticação
 Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::get('/login', function () {
     return view('auth.login');
-});
+})->name('login.view');
 
-// Rotas Protegidas por Autenticação
+// Rotas protegidas por autenticação
 Route::middleware(['auth', 'verified'])->group(function () {
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -56,5 +58,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Rotas de Autenticação (auth.php)
+// Rotas Administrativas (apenas para Admins)
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('clientes', ClienteController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+});
+
+// Importa as rotas de autenticação padrão do Laravel
 require __DIR__.'/auth.php';

@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); // Garante que o usuário está autenticado
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -19,7 +24,8 @@ class ClienteController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create clients'); // Verifica permissão antes de permitir acesso
+        return view('clientes.create');
     }
 
     /**
